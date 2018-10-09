@@ -1,0 +1,152 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    .tblProjects-container{
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+    .tblProjects-new-project{
+        background: dodgerBlue;
+        border-radius: 5px;
+        color: white;
+        padding: 7px;
+        margin-left: 10px;
+    }
+    .tblProjects-new-project:hover{
+        background: #1574d0;
+        cursor:pointer;
+    }
+    .tblProjects-title{
+        margin-left: 25px;
+        font-size: 13pt;
+    }
+    .tblProjects-title ~ div{
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="project">
+    @*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>*@
+
+    <div class="row">
+        <table role="grid" id="tblProjects" class="table table-striped " cellspacing="0" width="100%">
+            <thead>
+                <tr role="row">
+                    <th style="width: 100px; outline: none; text-align:center;" class="center">
+                        
+                    </th>
+                    <th style="width: 280px; outline: none;" class="center">
+                    </th>
+                    <th style="width: 40px; outline: none;" class="center">
+                        
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @*@foreach (var item in Model)
+                {*@
+                    <tr role="row">
+                        <td class="firstTd">
+                            <div>
+                                A
+                            </div>
+                        </td>
+                        <td>
+                            B
+                        </td>
+                        <td>
+                            B
+                        </td>
+                    </tr>
+                <tr role="row">
+                    <td class="firstTd">
+                        <div>
+                            A
+                        </div>
+                    </td>
+                    <td>
+                        B
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                <tr role="row">
+                    <td class="firstTd">
+                        <div>
+                            A
+                        </div>
+                    </td>
+                    <td>
+                        B
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                <tr role="row">
+                    <td class="firstTd">
+                        <div>
+                            A
+                        </div>
+                    </td>
+                    <td>
+                        B
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                <tr role="row">
+                    <td class="firstTd">
+                        <div>
+                            A
+                        </div>
+                    </td>
+                    <td>
+                        C
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                <tr role="row">
+                    <td class="firstTd">
+                        <div>
+                            A
+                        </div>
+                    </td>
+                    <td>
+                        B
+                    </td>
+                    <td>
+                        B
+                    </td>
+                </tr>
+                @*}*@
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#tblProjects').dataTable({
+            "dom": '<"tblProjects-container"<"tblProjects-title"><f<"tblProjects-new-project">>>t'
+        });
+        $('.tblProjects-title').html("<b>Projects</b>");
+        $('.tblProjects-new-project').text("New Project");
+        console.log($('#tblProjects > label').text());
+        //$('#tblProjects_filter').html('<label><input type=search" class="" placeholder="" aria-controls="tblProjects"></label>');
+    });
+</script>
