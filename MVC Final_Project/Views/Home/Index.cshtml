@@ -138,6 +138,7 @@
 
     </div>
 </div>
+<div id="newProject"></div>
 
 <script>
     $(document).ready(function () {
@@ -146,7 +147,10 @@
         });
         $('.tblProjects-title').html("<b>Projects</b>");
         $('.tblProjects-new-project').text("New Project");
-        console.log($('#tblProjects > label').text());
+        $('.tblProjects-new-project').on('click', function () {
+            $("#newProject").load('@Url.Action("ProjectPartial", "Home")');
+        });
         //$('#tblProjects_filter').html('<label><input type=search" class="" placeholder="" aria-controls="tblProjects"></label>');
+        //console.log($('#tblProjects > label').text());
     });
 </script>

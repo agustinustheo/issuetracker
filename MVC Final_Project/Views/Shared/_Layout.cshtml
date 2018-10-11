@@ -8,6 +8,7 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/datatable")
+    @RenderSection("scripts", required: false)
 
 </head>
 <body>
@@ -34,8 +35,8 @@
     <div class="navbar navbar-blue navbar-fixed-top">
         <div class="container">
             <div class="navbar-title-container">
-                <a>Log Out</a>
-                <div class="navbar-title">Welcome, @ViewBag.Title</div>
+                @Html.ActionLink("Log Out", "LogOut", "Account")
+                <div class="navbar-title">Welcome, @ViewBag.Username</div>
             </div>
             <ul class="nav navbar-nav">
                 <li>@Html.ActionLink("Project", "Index", "Home")</li>

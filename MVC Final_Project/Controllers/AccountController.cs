@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNet.Identity.Owin;
-using MVC_Final_Project.Models;
+﻿using MVC_Final_Project.Models;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_Final_Project.Controllers
@@ -9,50 +9,18 @@ namespace MVC_Final_Project.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-
-        public AccountController()
-        {
-        }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        //
+        public string connString = ConfigurationManager.ConnectionStrings["OJDSQLConn"].ToString();
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Index()
         {
-            ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+        [AllowAnonymous]
+        public ActionResult LogOut()
+        {
+            Session.Clear();
+            return RedirectToAction("Index", "Account");
         }
 
         //
@@ -60,24 +28,32 @@ namespace MVC_Final_Project.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(User userData)
         {
-            if (!ModelState.IsValid)
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
             {
-                return View(model);
-            }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToAction("Home", "Index");
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                connection.Open();
+                command.CommandText = "SELECT TOP 1 * FROM msUser WHERE userName=@userName AND userPassword=@userPassword;";
+                command.Parameters.AddWithValue("@userName", userData.userName);
+                command.Parameters.AddWithValue("@userPassword", userData.userPassword);
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows == false)
+                {
+                    connection.Close();
+                    return RedirectToAction("Index", "Account");
+                }
+                else
+                {
+                    while (reader.Read())
+                    {
+                        Session["UserID"] = reader.GetInt32(0);
+                        Session["Username"] = reader.GetString(1);
+                        //var Password = reader.GetString(2);
+                    }
+                    connection.Close();
+                    return RedirectToAction("Index", "Home");
+                }
             }
         }
     }
