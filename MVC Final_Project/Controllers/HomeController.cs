@@ -1,5 +1,6 @@
 ﻿using MVC_Final_Project.Models;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -16,35 +17,54 @@ namespace MVC_Final_Project.Controllers
             {
                 return RedirectToAction("Index", "Account");
             }
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
+            {
+                connection.Open();
+                command.CommandText = "SELECT a.projectID, a.projectName, a.projectDesc FROM msProject a JOIN trAuthUser b ON a.projectID = b.projectID WHERE b.userID = @userID AND b.userAuth = 1 ORDER BY a.projectName ASC;";
+                command.Parameters.AddWithValue("@userID", Convert.ToInt32(Session["UserID"]));
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows == true)
+                {
+                    List<Project> projectList = new List<Project>();
+                    while (reader.Read())
+                    {
+                        projectList.Add(new Project() { projectID = reader.GetInt32(0), projectName = reader.GetString(1), projectDesc = reader.GetString(2) });
+                    }
+                    ViewBag.projectList = projectList;
+                }
+                command.Parameters.Clear();
+                connection.Close();
+            }
             ViewBag.Username = Session["Username"].ToString();
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            if (Session["Username"] == null)
-            {
-                return RedirectToAction("Index", "Account");
-            }
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            if (Session["Username"] == null)
-            {
-                return RedirectToAction("Index", "Account");
-            }
-            ViewBag.Message = "Your contact page.";
-
             return View();
         }
 
         public async Task<PartialViewResult> ProjectPartial()
         {
             return PartialView("_NewProject");
+        }
+        public async Task<PartialViewResult> AuthUserPartial(int projectID)
+        {
+            List<User> userList = new List<User>();
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
+            {
+                connection.Open();
+                command.CommandText = "SELECT userID, userName FROM msUser;";
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows == true)
+                {
+                    while (reader.Read())
+                    {
+                        userList.Add(new User() { userID = reader.GetInt32(0), userName = reader.GetString(1) });
+                    }
+                }
+                connection.Close();
+            }
+            ViewBag.projectID = projectID;
+            ViewBag.userList = userList;
+            return PartialView("_AuthorizedUsers");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -54,22 +74,41 @@ namespace MVC_Final_Project.Controllers
             using (SqlCommand command = new SqlCommand("", connection))
             {
                 connection.Open();
-                command.CommandText = "INSERT INTO msProject (projectName, projectDesc) VALUES (@projectName, @projectDesc); INSERT INTO trAuthUser (projectID, userID) VALUES ((SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC), @userID);";
+                command.CommandText = "INSERT INTO msProject (projectName, projectDesc) VALUES (@projectName, @projectDesc); INSERT INTO trAuthUser (projectID, userID, userAuth) SELECT (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC) AS [projectID], userID, '0' AS [userAuth] FROM msUser; UPDATE trAuthUser SET userAuth = 1 WHERE userID = @userID AND projectID = (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC);";
                 command.Parameters.AddWithValue("@userID", Convert.ToInt32(Session["UserID"]));
                 command.Parameters.AddWithValue("@projectName", projectData.projectName);
                 command.Parameters.AddWithValue("@projectDesc", projectData.projectDesc);
                 SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows == false)
+                command.Parameters.Clear();
+                connection.Close();
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UpdateProjectAuth(Project projectData, int[] authorizedUsers)
+        {
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
+            {
+                connection.Open();
+                command.CommandText = "UPDATE trAuthUser SET userAuth = 0 WHERE projectID = @projectID;";
+                command.Parameters.AddWithValue("@projectID", projectData.projectID);
+                SqlDataReader reader = command.ExecuteReader();
+                command.Parameters.Clear();
+                connection.Close();
+                foreach (var userID in authorizedUsers)
                 {
+                    connection.Open();
+                    command.CommandText = "UPDATE trAuthUser SET userAuth = 1 WHERE userID = @userID AND projectID = @projectID;";
+                    command.Parameters.AddWithValue("@userID", userID);
+                    command.Parameters.AddWithValue("@projectID", projectData.projectID);
+                    reader = command.ExecuteReader();
+                    command.Parameters.Clear();
                     connection.Close();
-                    return RedirectToAction("Index", "Account");
-                }
-                else
-                {
-                    connection.Close();
-                    return RedirectToAction("Index", "Home");
                 }
             }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

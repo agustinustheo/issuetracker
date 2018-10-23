@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>*@
-    <div class="navbar navbar-blue navbar-fixed-top">
+    <div id="navbarWelcome" class="navbar navbar-blue navbar-fixed-top">
         <div class="container">
             <div class="navbar-title-container">
                 @Html.ActionLink("Log Out", "LogOut", "Account")
@@ -40,7 +40,7 @@
             </div>
             <ul class="nav navbar-nav">
                 <li>@Html.ActionLink("Project", "Index", "Home")</li>
-                <li>@Html.ActionLink("User Management", "About", "Home")</li>
+                <li>@Html.ActionLink("User Management", "Index", "UserManagement")</li>
             </ul>
         </div>
     </div>

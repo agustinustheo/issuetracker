@@ -10,6 +10,6 @@ namespace MVC_Final_Project.Models
         public string userPassword { get; set; }
         public int userRole { get; set; }
         public string userPhoto { get; set; }
-        public int userStatus { get; set; }
+        public bool userStatus { get; set; }
     }
 }

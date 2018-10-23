@@ -1,0 +1,45 @@
+﻿@using MVC_Final_Project.Models
+@model Project
+
+<style>
+    .project-form-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.4);
+    }
+
+    #projectForm {
+        width: 600px;
+        height: 400px;
+        background: white;
+        margin: auto;
+        margin-top: calc((100vh - 400px) / 2);
+    }
+</style>
+
+<div class="project-form-modal">
+    <div id="projectForm">
+        @using (Html.BeginForm("UpdateProjectAuth", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Add Authorized User</h3>
+            <hr />
+            @Html.HiddenFor(x => x.projectID, new { @value = ViewBag.projectID });
+            foreach (var x in ViewBag.userList)
+            {
+                <div>
+                    <label><input type="checkbox" name="authorizedUsers" value="@x.userID">@x.userName</label>
+                </div>
+            }
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div>

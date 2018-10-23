@@ -1,0 +1,80 @@
+﻿@using MVC_Final_Project.Models
+@model User
+
+@{
+    List<SelectListItem> userRoleList = new List<SelectListItem>();
+    userRoleList.Add(new SelectListItem
+    {
+        Text = "Admin",
+        Value = "1",
+        Selected = true
+    });
+    userRoleList.Add(new SelectListItem
+    {
+        Text = "User",
+        Value = "2"
+    });
+}
+
+<style>
+    .user-form-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.4);
+    }
+
+    #userForm {
+        width: 600px;
+        height: 700px;
+        background: white;
+        margin: auto;
+        margin-top: calc((100vh - 400px) / 2);
+    }
+</style>
+
+<div class="user-form-modal">
+    <div id="userForm">
+        @using (Html.BeginForm("UpdateUser", "UserManagement", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Edit User</h3>
+            <h4>Edit User</h4>
+            <hr />
+            @Html.HiddenFor(m => m.userID, new { @value = ViewBag.userID });
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.userName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.userName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.userPassword, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.userPassword, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.userRole, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.userRole, userRoleList, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <label>@Html.CheckBoxFor(m => m.userStatus)Active</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save and Close" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
