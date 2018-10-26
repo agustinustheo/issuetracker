@@ -101,6 +101,29 @@ namespace MVC_Final_Project.Controllers
             ViewBag.TaskData = taskList;
             return PartialView("_SprintTable");
         }
+        public async Task<PartialViewResult> UpdateSprintPartial(int sprintID)
+        {
+            Sprint sprintData = new Sprint();
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
+            {
+                connection.Open();
+                command.CommandText = "SELECT sprintID, sprintName, startDate, endDate, projectID FROM trSprint WHERE sprintID = @sprintID";
+                command.Parameters.AddWithValue("@sprintID", sprintID);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    sprintData.sprintID = reader.GetInt32(0);
+                    sprintData.sprintName = reader.GetString(1);
+                    sprintData.startDate = reader.GetDateTime(2);
+                    sprintData.endDate = reader.GetDateTime(3);
+                    sprintData.projectID = reader.GetInt32(4);
+                }
+                command.Parameters.Clear();
+                connection.Close();
+            }
+            return PartialView("_UpdateSprint", sprintData);
+        }
         public async Task<PartialViewResult> AddWorkItemPartial(int sprintID, int projectID)
         {
             ViewBag.sprintID = sprintID;

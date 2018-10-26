@@ -1,0 +1,53 @@
+﻿
+@using MVC_Final_Project.Models
+@model Sprint
+
+<style>
+</style>
+
+<div class="project-form-modal">
+    <div id="projectForm">
+        @using (Html.BeginForm("UpdateSprintData", "Project", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Sprint</h3>
+            <h4>Update</h4>
+            <hr />
+            @Html.HiddenFor(m => m.sprintID);
+            @Html.HiddenFor(m => m.projectID);
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.sprintName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.sprintName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.startDate, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.startDate, new { @class = "form-control", id = "sprintStartDate" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.endDate, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.endDate, new { @class = "form-control", id="sprintEndDate" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save and Close" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#sprintStartDate").datepicker();
+            $("#sprintEndDate").datepicker();
+        });
+    </script>
+</div>

@@ -84,9 +84,7 @@ namespace MVC_Final_Project.Controllers
                 command.Parameters.Clear();
                 connection.Close();
             }
-            ViewBag.userID = userID;
-            ViewBag.userData = user;
-            return PartialView("_EditUser");
+            return PartialView("_EditUser", user);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

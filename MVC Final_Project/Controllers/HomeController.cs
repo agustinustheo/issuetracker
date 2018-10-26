@@ -51,13 +51,21 @@ namespace MVC_Final_Project.Controllers
             using (SqlCommand command = new SqlCommand("", connection))
             {
                 connection.Open();
-                command.CommandText = "SELECT userID, userName FROM msUser;";
+                command.CommandText = "SELECT a.userID, a.userName, b.userAuth, a.userPhoto FROM msUser a JOIN trAuthUser b ON a.userID = b.userID WHERE b.projectID = @projectID;";
+                command.Parameters.AddWithValue("@projectID", projectID);
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows == true)
                 {
                     while (reader.Read())
                     {
-                        userList.Add(new User() { userID = reader.GetInt32(0), userName = reader.GetString(1) });
+                        int userAuthStatus = reader.GetInt32(2);
+                        userList.Add(new User()
+                        {
+                            userID = reader.GetInt32(0),
+                            userName = reader.GetString(1),
+                            userPhoto = reader.GetString(3),
+                            userStatus = userAuthStatus == 1 ? true : false
+                        });
                     }
                 }
                 connection.Close();

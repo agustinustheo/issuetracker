@@ -503,6 +503,7 @@
     <Content Include="Views\Project\_AddTaskItem.cshtml" />
     <Content Include="Views\Project\_UpdateWorkItem.cshtml" />
     <Content Include="Views\Project\_UpdateTaskItem.cshtml" />
+    <Content Include="Views\Project\_UpdateSprint.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

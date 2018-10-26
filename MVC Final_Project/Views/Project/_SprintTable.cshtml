@@ -111,7 +111,7 @@
             "dom": '<"tblWork-container"<"tblWork-title"><"tblWork-details">>t'
         });
         $('.tblWork-title').html("<b>@sprintData.sprintName</b><a id='addWorkItem' data-sprint='@sprintData.sprintID' data-project='@ViewBag.projectID'>Add Work Items</a>");
-        $('.tblWork-details').html("<a>Set Dates</a><span>@DateTime.ParseExact(sprintData.startDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy") - @DateTime.ParseExact(sprintData.endDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy")<span>");
+        $('.tblWork-details').html("<a id='updateSprint' data-sprint='@sprintData.sprintID'>Set Dates</a><span>@DateTime.ParseExact(sprintData.startDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy") - @DateTime.ParseExact(sprintData.endDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy")<span>");
         $('#addWorkItem').on('click', function () {
             var sprintID = $(this).data('sprint');
             var projectID = $(this).data('project');
@@ -139,6 +139,12 @@
             var taskID = $(this).data('task');
             var projectID = $(this).data('project');
             $.get('@Url.Action("UpdateTaskItemPartial", "Project")', { taskID: taskID, projectID: projectID }, function (result) {
+                $('#modal').html(result);
+            });
+        });
+        $('#updateSprint').on('click', function () {
+            var sprintID = $(this).data('sprint');
+            $.get('@Url.Action("UpdateSprintPartial", "Project")', { sprintID: sprintID }, function (result) {
                 $('#modal').html(result);
             });
         });

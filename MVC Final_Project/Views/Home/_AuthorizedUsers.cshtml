@@ -14,9 +14,18 @@
             @Html.HiddenFor(x => x.projectID, new { @value = ViewBag.projectID });
             foreach (var x in ViewBag.userList)
             {
-                <div>
-                    <label><input type="checkbox" name="authorizedUsers" value="@x.userID">@x.userName</label>
-                </div>
+                if (x.userStatus == true)
+                {
+                    <div>
+                        <label><input type="checkbox" name="authorizedUsers" value="@x.userID" checked>@x.userName</label>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <label><input type="checkbox" name="authorizedUsers" value="@x.userID">@x.userName</label>
+                    </div>
+                }
             }
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
