@@ -2,46 +2,6 @@
     ViewBag.Title = "Home Page";
 }
 
-<style>
-    .tblProjects-container{
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-    }
-    .tblProjects-new-project{
-        background: dodgerBlue;
-        border-radius: 5px;
-        color: white;
-        padding: 7px;
-        margin-left: 10px;
-        margin-bottom: 10px;
-    }
-    .tblProjects-new-project:hover{
-        background: #1574d0;
-        cursor:pointer;
-    }
-    .tblProjects-title{
-        margin-left: 25px;
-        font-size: 13pt;
-        margin-bottom: 5px;
-    }
-    .tblProjects-title ~ div{
-        display: flex;
-        align-items: center;
-        margin-right: 10px;
-    }
-    .dataTables_wrapper table thead{
-        display:none;
-    }
-    #tblProjects > tbody > tr > td:nth-child(2){
-        text-align: right;
-    }
-    #tblProjects > tbody > tr > td > a{
-        margin-right: 10px;
-        cursor: pointer;
-    }
-</style>
-
 <div class="project">
     @*<div class="jumbotron">
         <h1>ASP.NET</h1>
@@ -50,7 +10,7 @@
     </div>*@
 
     <div class="row">
-        <table role="grid" id="tblProjects" class="table table-striped " cellspacing="0" width="100%">
+        <table role="grid" id="tblProjects" class="table table-striped " cellspacing="0">
             <thead>
                 <tr role="row">
                     <th style="width: 380px; outline: none; text-align:center;" class="center">
@@ -65,16 +25,18 @@
                 @if (ViewBag.projectList != null)
                 {
                     foreach (var item in ViewBag.projectList)
-                            {
+                    {
                         <tr role="row">
                             <td class="firstTd">
                                 <div>
-                                    @item.projectName
+                                    @{
+                                        string name = item.projectName.ToString();
+                                    }
+                                    @Html.ActionLink(name, "Index", "Project", new { projectID = item.projectID }, new { @class = "tblProjects-backlog-project" })
                                 </div>
                             </td>
                             <td>
                                 <a class="tblProjects-auth-project" data-id=@item.projectID>Security</a>
-                                @*@Html.ActionLink("Security", "AuthUserPartial", "Home" , new { item.projectID }, null)*@
                             </td>
                         </tr>
                     }

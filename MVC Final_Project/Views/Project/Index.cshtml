@@ -1,115 +1,125 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Backlog Items";
+    int currentCounter = 0;
+    int pastCounter = 0;
+    int futureCounter = 0;
+    int? firstCurrentID = null;
 }
 
 <style>
-    .tblProjects-container {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-    }
+.tblWork-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
 
-    .tblProjects-new-project {
-        background: dodgerBlue;
-        border-radius: 5px;
-        color: white;
-        padding: 7px;
-        margin-left: 10px;
-        margin-bottom: 10px;
-    }
+.tblWork-title {
+    margin-left: 25px;
+    margin-bottom: 5px;
+}
 
-        .tblProjects-new-project:hover {
-            background: #1574d0;
-            cursor: pointer;
-        }
+.tblWork-title > b {
+    font-size: 13pt;
+}
 
-    .tblProjects-title {
-        margin-left: 25px;
-        font-size: 13pt;
-        margin-bottom: 5px;
-    }
+.tblWork-title ~ div {
+    margin-right: 10px;
+}
 
-        .tblProjects-title ~ div {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
+.tblWork-title > * {
+    display: block;
+    text-align: left;
+}
 
-    .dataTables_wrapper table thead {
-        display: none;
-    }
+.tblWork-details > * {
+    display: block;
+    text-align: right;
+}
 
-    #tblProjects > tbody > tr > td:nth-child(2) {
-        text-align: right;
-    }
+#tblWork > tbody > tr > td > a {
+    margin-right: 10px;
+    cursor: pointer;
+}
 
-    #tblProjects > tbody > tr > td > a {
-        margin-right: 10px;
-        cursor: pointer;
-    }
+#tblWork td, #tblWork th {
+    border: 0;
+}
+
+#tblWork th {
+    font-size: 10pt;
+    color: grey;
+    font-weight: normal;
+}
+
+#tblWork > thead > tr > th:nth-child(1) {
+    padding-left: 25px;
+}
 </style>
 
 <div class="project">
-    @*<div class="jumbotron">
-            <h1>ASP.NET</h1>
-            <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-            <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-        </div>*@
-
-    <div class="row">
-        <table role="grid" id="tblProjects" class="table table-striped " cellspacing="0" width="100%">
-            <thead>
-                <tr role="row">
-                    <th style="width: 380px; outline: none; text-align:center;" class="center">
-
-                    </th>
-                    <th style="width: 40px; outline: none;" class="center">
-
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (ViewBag.projectList != null)
+    <h2>@ViewBag.Title - @ViewBag.projectName</h2>
+    <div class="backlog-items">
+        <div class="backlog-items-history">
+            @foreach (var sprintItem in ViewBag.sprintList)
+            {
+                if (sprintItem.startDate > DateTime.Today)
                 {
-                    foreach (var item in ViewBag.projectList)
+                    if (futureCounter == 0)
                     {
-                        <tr role="row">
-                            <td class="firstTd">
-                                <div>
-                                    @item.projectName
-                                </div>
-                            </td>
-                            <td>
-                                <a class="tblProjects-auth-project" data-id=@item.projectID>Security</a>
-                                @*@Html.ActionLink("Security", "AuthUserPartial", "Home" , new { item.projectID }, null)*@
-                            </td>
-                        </tr>
+                        <span>Future</span>
+                        if (firstCurrentID == null)
+                        {
+                            firstCurrentID = Convert.ToInt32(sprintItem.sprintID);
+                        }
                     }
+                    <a class="backlog-sprint-partial" data-id=@sprintItem.sprintID>@sprintItem.sprintName</a>
+                    futureCounter++;
                 }
-            </tbody>
-        </table>
+                else if (sprintItem.endDate < DateTime.Today)
+                {
+                    if (pastCounter == 0)
+                    {
+                        <span>Past</span>
+                        firstCurrentID = Convert.ToInt32(sprintItem.sprintID);
+                    }
+                    <a class="backlog-sprint-partial" data-id=@sprintItem.sprintID>@sprintItem.sprintName</a>
+                    pastCounter++;
+                }
+                else if (sprintItem.startDate <= DateTime.Today && sprintItem.endDate >= DateTime.Today)
+                {
+                    if (currentCounter == 0)
+                    {
+                        <span>Current</span>
+                        firstCurrentID = Convert.ToInt32(sprintItem.sprintID);
+                    }
+                    <a class="backlog-sprint-partial" data-id=@sprintItem.sprintID>@sprintItem.sprintName</a>
+                    currentCounter++;
+                }
+            }
+            @if (ViewBag.SprintID != null)
+            {
+                firstCurrentID = Convert.ToInt32(ViewBag.SprintID);
+            }
+        </div>
+
+        <div class="backlog-items-work-items">
+
+        </div>
     </div>
 </div>
 <div id="modal"></div>
 
 <script>
     $(document).ready(function () {
-        $('#tblProjects').dataTable({
-            "dom": '<"tblProjects-container"<"tblProjects-title"><f<"tblProjects-new-project">>>t'
-        });
-        $('.tblProjects-title').html("<b>Projects</b>");
-        $('.tblProjects-new-project').text("New Project");
-        $('.tblProjects-new-project').on('click', function () {
-            $("#modal").load('@Url.Action("ProjectPartial", "Home")');
-        });
-        $('.tblProjects-auth-project').on('click', function (e) {
+        $('.backlog-sprint-partial').on('click', function (e) {
             e.preventDefault();
             var id = $(this).data('id');
-            $.get('@Url.Action("AuthUserPartial", "Home")', { projectID: id }, function (result) {
-                $('#modal').html(result);
+            $.get('@Url.Action("SprintTable", "Project")', { sprintID: id }, function (result) {
+                $('.backlog-items-work-items').html(result);
             });
         });
-        //$('#tblProjects_filter').html('<label><input type=search" class="" placeholder="" aria-controls="tblProjects"></label>');
-        //console.log($('#tblProjects > label').text());
+        $.get('@Url.Action("SprintTable", "Project")', { sprintID: @firstCurrentID }, function (result) {
+            $('.backlog-items-work-items').html(result);
+        });
     });
 </script>

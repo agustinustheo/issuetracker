@@ -1,0 +1,58 @@
+﻿@using MVC_Final_Project.Models
+@model Work
+@{
+    List<SelectListItem> workStateList = new List<SelectListItem>();
+    workStateList.Add(new SelectListItem
+    {
+        Text = "New",
+        Value = "1",
+        Selected = true
+    });
+    workStateList.Add(new SelectListItem
+    {
+        Text = "Done",
+        Value = "2"
+    });
+    workStateList.Add(new SelectListItem
+    {
+        Text = "To Do",
+        Value = "3"
+    });
+}
+
+<style>
+</style>
+
+<div class="project-form-modal">
+    <div id="projectForm">
+        @using (Html.BeginForm("UpdateWorkItem", "Project", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Update</h3>
+            <h4>Work Item</h4>
+            <hr />
+            @Html.HiddenFor(m => m.projectID);
+            @Html.HiddenFor(m => m.sprintID);
+            @Html.HiddenFor(m => m.workID);
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.workName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.workName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.workState, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.workState, workStateList, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save and Close" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div>

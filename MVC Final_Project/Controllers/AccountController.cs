@@ -34,7 +34,7 @@ namespace MVC_Final_Project.Controllers
             using (SqlCommand command = new SqlCommand("", connection))
             {
                 connection.Open();
-                command.CommandText = "SELECT TOP 1 userID, userName, userRole FROM msUser WHERE userName=@userName AND userPassword=@userPassword;";
+                command.CommandText = "SELECT TOP 1 userID, userRole FROM msUser WHERE userName=@userName AND userPassword=@userPassword;";
                 command.Parameters.AddWithValue("@userName", userData.userName);
                 command.Parameters.AddWithValue("@userPassword", userData.userPassword);
                 SqlDataReader reader = command.ExecuteReader();
@@ -48,8 +48,8 @@ namespace MVC_Final_Project.Controllers
                     while (reader.Read())
                     {
                         Session["UserID"] = reader.GetInt32(0);
-                        Session["Username"] = reader.GetString(1);
-                        Session["UserRole"] = reader.GetInt32(2);
+                        Session["Username"] = userData.userName;
+                        Session["UserRole"] = reader.GetInt32(1);
                     }
                     connection.Close();
                     return RedirectToAction("Index", "Home");

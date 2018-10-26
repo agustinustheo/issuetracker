@@ -3,50 +3,6 @@
 }
 
 <style>
-    .tblUser-container {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-    }
-
-    .tblUser-new-user {
-        background: dodgerBlue;
-        border-radius: 5px;
-        color: white;
-        padding: 7px;
-        margin-left: 10px;
-        margin-bottom: 10px;
-    }
-
-        .tblUser-new-user:hover {
-            background: #1574d0;
-            cursor: pointer;
-        }
-
-    .tblUser-title {
-        margin-left: 25px;
-        font-size: 13pt;
-        margin-bottom: 5px;
-    }
-
-        .tblUser-title ~ div {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
-
-    .dataTables_wrapper table thead {
-        display: none;
-    }
-
-    #tblUser > tbody > tr > td:nth-child(2) {
-        text-align: right;
-    }
-
-    #tblUser > tbody > tr > td > a {
-        margin-right: 10px;
-        cursor: pointer;
-    }
 </style>
 
 <div class="usermanagement">
@@ -57,7 +13,7 @@
         </div>*@
 
     <div class="row">
-        <table role="grid" id="tblUser" class="table table-striped " cellspacing="0" width="100%">
+        <table role="grid" id="tblUser" class="table table-striped " cellspacing="0">
             <thead>
                 <tr role="row">
                     <th style="outline: none; text-align:center;" class="center">

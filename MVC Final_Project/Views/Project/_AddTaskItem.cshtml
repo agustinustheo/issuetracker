@@ -1,0 +1,74 @@
+﻿
+@using MVC_Final_Project.Models
+@model Task
+@{
+    List<SelectListItem> taskStateList = new List<SelectListItem>();
+    taskStateList.Add(new SelectListItem
+    {
+        Text = "New",
+        Value = "1",
+        Selected = true
+    });
+    taskStateList.Add(new SelectListItem
+    {
+        Text = "Done",
+        Value = "2"
+    });
+    taskStateList.Add(new SelectListItem
+    {
+        Text = "To Do",
+        Value = "3"
+    });
+    List<SelectListItem> userList = new List<SelectListItem>();
+    foreach(var userData in ViewBag.userList)
+    {
+        userList.Add(new SelectListItem
+        {
+            Text = userData.userName,
+            Value = userData.userID.ToString()
+        });
+    }
+}
+
+<style>
+</style>
+
+<div class="project-form-modal">
+    <div id="projectForm">
+        @using (Html.BeginForm("AddTaskItem", "Project", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Add</h3>
+            <h4>Task Items</h4>
+            <hr />
+            @Html.HiddenFor(m => m.workID, new { @value = ViewBag.workID });
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.taskName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.taskName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.userID, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.userID, userList, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.taskState, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m => m.taskState, taskStateList, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save and Close" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
