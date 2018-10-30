@@ -17,6 +17,10 @@ namespace MVC_Final_Project.Controllers
             {
                 return RedirectToAction("Index", "Account");
             }
+            if (Convert.ToInt32(Session["UserRole"]) != 1)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
             {

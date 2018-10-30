@@ -1,9 +1,8 @@
-﻿@using MVC_Final_Project.Models
-@using System.Globalization
-@model Sprint
+﻿@using System.Globalization
+@using MVC_Final_Project.Models.ViewModel
+@model SprintWorkList
 @{ 
-    Sprint sprintData = ViewBag.SprintData;
-    int count = 0;
+    var sprint = Model.SprintItem;
 }
 <style>
     .leftbox {
@@ -19,6 +18,7 @@
     }
 </style>
 
+<div class="tblWork-container"><div class="tblWork-title"></div><div class="tblWork-details"></div></div>
 <table role="grid" id="tblWork" class="table table-striped " cellspacing="0">
     <thead>
         <tr role="row">
@@ -40,78 +40,81 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var workItem in ViewBag.WorkData)
+    @foreach (var workItem in Model.Works)
     {
         <tr role="row">
             <td class="firstTd">
-                <div class="addTaskItem" data-work="@workItem.workID" data-project="@ViewBag.projectID" style="display: flex; cursor: pointer">
+                <div class="addTaskItem" data-work="@workItem.WorkItem.workID" data-project="@ViewBag.projectID" style="display: flex; cursor: pointer">
                     <div class="plussign">+</div>
                     <span class="leftbox"></span>
-                    <span style="margin-left: 10px">@workItem.workName</span>
+                    <span style="margin-left: 10px">@workItem.WorkItem.workName</span>
                 </div>
             </td>
             <td>
-                @if (workItem.workState == 1)
+                @if (workItem.WorkItem.workState == 1)
                 {
                     <span>New</span>
                 }
-                else if (workItem.workState == 2)
+                else if (workItem.WorkItem.workState == 2)
                 {
                     <span>Done</span>
                 }
-                else if (workItem.workState == 3)
+                else if (workItem.WorkItem.workState == 3)
                 {
                     <span>To Do</span>
                 }
             </td>
             <td></td>
-            <td><a class="updateWorkItem" data-work="@workItem.workID" data-project="@ViewBag.projectID" >Edit</a></td>
-            <td><a class="removeWorkItem" data-work="@workItem.workID" data-project="@ViewBag.projectID" >Remove</a></td>
+            <td><a class="updateWorkItem" data-work="@workItem.WorkItem.workID" data-project="@ViewBag.projectID">Edit</a></td>
+            <td><a class="removeWorkItem" data-work="@workItem.WorkItem.workID" data-project="@ViewBag.projectID">Remove</a></td>
         </tr>
-        foreach (var taskItem in ViewBag.TaskData)
-        {
-            if (taskItem.workID == workItem.workID)
+            foreach (var taskItem in workItem.Tasks)
             {
-                <tr role="row">
-                    <td>
-                        <div style="display: flex; margin-left: 20px;">
-                            <span class="leftbox-yellow"></span>
-                            <span style="margin-left: 10px">@taskItem.taskName</span>
-                        </div>
-                    </td>
-                    <td>
-                        @if (taskItem.taskState == 1)
-                        {
-                            <span>New</span>
-                        }
-                        else if (taskItem.taskState == 2)
-                        {
-                            <span>Done</span>
-                        }
-                        else if (taskItem.taskState == 3)
-                        {
-                            <span>To Do</span>
-                        }
-                    </td>
-                    <td>
-                        @taskItem.userID
-                    </td>
-                    <td><a class="updateTaskItem" data-task="@taskItem.taskID" data-project="@ViewBag.projectID" >Edit</a></td>
-                    <td><a class="removeTaskItem" data-task="@taskItem.taskID" data-project="@ViewBag.projectID" >Remove</a></td>
-                </tr>
+                if (taskItem.workID == workItem.WorkItem.workID)
+                {
+                    <tr>
+                        <td>
+                            <div style="display: flex; margin-left: 20px;">
+                                <span class="leftbox-yellow"></span>
+                                <span style="margin-left: 10px">@taskItem.taskName</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (taskItem.taskState == 1)
+                            {
+                                <span>New</span>
+                            }
+                            else if (taskItem.taskState == 2)
+                            {
+                                <span>Done</span>
+                            }
+                            else if (taskItem.taskState == 3)
+                            {
+                                <span>To Do</span>
+                            }
+                        </td>
+                        <td>
+                            @foreach (var user in ViewBag.userList)
+                            {
+                                if (taskItem.userID == user.userID)
+                                {
+                                    @user.userName
+                                }
+                            }
+                        </td>
+                        <td><a class="updateTaskItem" data-task="@taskItem.taskID" data-project="@ViewBag.projectID">Edit</a></td>
+                        <td><a class="removeTaskItem" data-task="@taskItem.taskID" data-project="@ViewBag.projectID">Remove</a></td>
+                    </tr>
+                }
             }
-        }
     }
-</tbody>
+    </tbody>
 </table>
 
 <script>
     $(document).ready(function () {
-        $('#tblWork').dataTable({
-            "dom": '<"tblWork-container"<"tblWork-title"><"tblWork-details">>t'
-        });
-        $('.tblWork-title').html("<b>@sprintData.sprintName</b><a id='addWorkItem' data-sprint='@sprintData.sprintID' data-project='@ViewBag.projectID'>Add Work Items</a>");
-        $('.tblWork-details').html("<a id='updateSprint' data-sprint='@sprintData.sprintID'>Set Dates</a><span>@DateTime.ParseExact(sprintData.startDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy") - @DateTime.ParseExact(sprintData.endDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy")<span>");
+        $('.tblWork-title').html("<b>@sprint.sprintName</b><a id='addWorkItem' data-sprint='@sprint.sprintID' data-project='@ViewBag.projectID'>Add Work Items</a>");
+        $('.tblWork-details').html("<a id='updateSprint' data-sprint='@sprint.sprintID'>Set Dates</a><span>@DateTime.ParseExact(sprint.startDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy") - @DateTime.ParseExact(sprint.endDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy")<span>");
         $('#addWorkItem').on('click', function () {
             var sprintID = $(this).data('sprint');
             var projectID = $(this).data('project');

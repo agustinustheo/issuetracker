@@ -1,4 +1,5 @@
 ﻿using MVC_Final_Project.Models;
+using MVC_Final_Project.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -45,8 +46,13 @@ namespace MVC_Final_Project.Controllers
         public async Task<PartialViewResult> SprintTable(int sprintID)
         {
             Sprint sprint = new Sprint();
+            List<User> userList = new List<User>();
             List<Work> workList = new List<Work>();
             List<Models.Task> taskList = new List<Models.Task>();
+            var model = new SprintWorkList();
+            model.SprintItem = new Sprint();
+            model.Works = new List<WorkTaskList>();
+
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
             {
@@ -58,10 +64,10 @@ namespace MVC_Final_Project.Controllers
                 {
                     while (reader.Read())
                     {
-                        sprint.sprintID = reader.GetInt32(0);
-                        sprint.sprintName = reader.GetString(1);
-                        sprint.startDate = reader.GetDateTime(2);
-                        sprint.endDate = reader.GetDateTime(3);
+                        model.SprintItem.sprintID = reader.GetInt32(0);
+                        model.SprintItem.sprintName = reader.GetString(1);
+                        model.SprintItem.startDate = reader.GetDateTime(2);
+                        model.SprintItem.endDate = reader.GetDateTime(3);
                         ViewBag.projectID = reader.GetInt32(4);
                     }
                 }
@@ -95,11 +101,45 @@ namespace MVC_Final_Project.Controllers
                 }
                 command.Parameters.Clear();
                 connection.Close();
+
+                connection.Open();
+                command.CommandText = "SELECT a.userID, userName FROM msUser a JOIN trAuthUser b ON a.userID = b.userID WHERE b.projectID = @projectID AND b.userAuth = 1;";
+                command.Parameters.AddWithValue("@projectID", ViewBag.projectID);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    userList.Add(new User() { userID = reader.GetInt32(0), userName = reader.GetString(1) });
+                }
+                command.Parameters.Clear();
+                connection.Close();
             }
-            ViewBag.SprintData = sprint;
-            ViewBag.WorkData = workList;
-            ViewBag.TaskData = taskList;
-            return PartialView("_SprintTable");
+            foreach (var work in workList)
+            {
+                model.Works.Add(new WorkTaskList()
+                {
+                    WorkItem = work
+                });
+            }
+            foreach (var workViewModel in model.Works)
+            {
+                workViewModel.Tasks = new List<Models.Task>();
+                foreach (var taskListItem in taskList)
+                {
+                    if (workViewModel.WorkItem.workID == taskListItem.workID)
+                    {
+                        workViewModel.Tasks.Add(new Models.Task()
+                        {
+                            taskID = taskListItem.taskID,
+                            taskName = taskListItem.taskName,
+                            taskState = taskListItem.taskState,
+                            userID = taskListItem.userID,
+                            workID = taskListItem.workID
+                        });
+                    }
+                }
+            }
+            ViewBag.userList = userList;
+            return PartialView("_SprintTable", model);
         }
         public async Task<PartialViewResult> UpdateSprintPartial(int sprintID)
         {

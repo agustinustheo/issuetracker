@@ -5,13 +5,31 @@
 }
 
 <style>
-    #navbarWelcome{
+    #navbarWelcome, footer{
         display: none;
+    }
+    #loginForm{
+        border: 1px solid dodgerBlue; 
+        width: 300px; 
+        height: 360px; 
+        padding: 20px;
+        margin: auto;
+        margin-top: 40px;
+    }
+    #loginForm h3{
+        color: dodgerblue;
+    }
+    #loginForm .form-group > .control-label{
+        margin-left: 20px;
+    }
+    .sign-in-button > div{
+        position: relative; 
+        float: right;
+        margin-right: 20px;
     }
 </style>
 
 <div class="row">
-    <div class="col-md-8">
         <section id="loginForm">
             @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
@@ -21,14 +39,16 @@
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
-                    @Html.LabelFor(m => m.userName, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
+                    @Html.LabelFor(m => m.userName, "Username", new { @class = "control-label" })
+                    <br />
+                    <div class="col-lg-12">
                         @Html.TextBoxFor(m => m.userName, new { @class = "form-control" })
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.userPassword, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
+                    @Html.LabelFor(m => m.userPassword, "Password", new { @class = "control-label" })
+                    <br />
+                    <div class="col-lg-12">
                         @Html.PasswordFor(m => m.userPassword, new { @class = "form-control" })
                     </div>
                 </div>
@@ -41,9 +61,9 @@
                     </div>
                 </div>*@
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Log in" class="btn btn-default" />
+                <div class="form-group sign-in-button">
+                    <div>
+                        <input type="submit" value="Sign In" class="btn btn-default" />
                     </div>
                 </div>
 
@@ -56,7 +76,6 @@
                     </p>*@
             }
         </section>
-    </div>
     @*<div class="col-md-4">
         <section id="socialLoginForm">
             @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })

@@ -40,7 +40,10 @@
             </div>
             <ul class="nav navbar-nav">
                 <li>@Html.ActionLink("Project", "Index", "Home")</li>
-                <li>@Html.ActionLink("User Management", "Index", "UserManagement")</li>
+                @if (Convert.ToInt32(Session["UserRole"]) == 1)
+                {
+                    <li>@Html.ActionLink("User Management", "Index", "UserManagement")</li>
+                }
             </ul>
         </div>
     </div>

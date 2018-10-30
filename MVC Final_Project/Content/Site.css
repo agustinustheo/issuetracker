@@ -109,8 +109,8 @@ textarea {
 }
 
 #projectForm {
-    width: 600px;
-    height: 400px;
+    width: fit-content;
+    padding: 20px;
     background: white;
     margin: auto;
     margin-top: calc((100vh - 400px) / 2);

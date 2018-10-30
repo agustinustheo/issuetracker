@@ -208,6 +208,7 @@
     <Compile Include="Models\Sprint.cs" />
     <Compile Include="Models\Task.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\ViewModel\ProjectTaskList.cs" />
     <Compile Include="Models\Work.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
