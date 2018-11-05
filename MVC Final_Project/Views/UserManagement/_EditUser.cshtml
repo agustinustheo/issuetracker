@@ -21,7 +21,7 @@
 
 <div class="user-form-modal">
     <div id="userForm">
-        @using (Html.BeginForm("UpdateUser", "UserManagement", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        @using (Html.BeginForm("UpdateUser", "UserManagement", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
         {
             @Html.AntiForgeryToken()
             <h3>Edit User</h3>

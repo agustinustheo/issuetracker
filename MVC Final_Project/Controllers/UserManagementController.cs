@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MVC_Final_Project.Controllers
@@ -92,9 +94,16 @@ namespace MVC_Final_Project.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddUser(User userData)
+        public async Task<ActionResult> AddUser(User userData, HttpPostedFileBase file)
         {
-            userData.userPhoto = "";
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                if (fileName != null)
+                {
+                    userData.userPhoto = Path.Combine(Server.MapPath("~/Images/user_assets/" + userData.userName + "/profile_picture/"), fileName).ToString();
+                }
+            }
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
             {
@@ -120,9 +129,16 @@ namespace MVC_Final_Project.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateUser(User userData)
+        public async Task<ActionResult> UpdateUser(User userData, HttpPostedFileBase file)
         {
-            userData.userPhoto = "";
+            if (file != null && file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                if (fileName != null)
+                {
+                    userData.userPhoto = Path.Combine(Server.MapPath("~/Images/user_assets/" + userData.userName + "/profile_picture/"), fileName).ToString();
+                }
+            }
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
             {
