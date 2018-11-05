@@ -36,23 +36,32 @@
             @Html.HiddenFor(m => m.workID);
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
-                @Html.LabelFor(m => m.workName, new { @class = "col-md-2 control-label" })
-                <div class="col-md-10">
+                @Html.LabelFor(m => m.workName, "Work Name", new { @class = "control-label" })
+                <div class="col-lg-12">
                     @Html.TextBoxFor(m => m.workName, new { @class = "form-control" })
                 </div>
             </div>
             <div class="form-group">
-                @Html.LabelFor(m => m.workState, new { @class = "col-md-2 control-label" })
-                <div class="col-md-10">
+                @Html.LabelFor(m => m.workState, "Work State", new { @class = "control-label" })
+                <div class="col-lg-12">
                     @Html.DropDownListFor(m => m.workState, workStateList, new { @class = "form-control" })
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
+            <div class="form-group flex-button">
+                <div class="col-md-offset-7">
                     <input type="submit" value="Save and Close" class="btn btn-default" />
+                </div>
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-default">Close</button>
                 </div>
             </div>
         }
     </div>
 </div>
+
+<script>
+    $('button.btn.btn-default').click(function () {
+        location.reload();
+    });
+</script>

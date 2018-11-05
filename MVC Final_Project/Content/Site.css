@@ -16,13 +16,6 @@
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
-}
-
 .navbar-blue{
     background: dodgerBlue !important;
     color: white !important;
@@ -109,11 +102,19 @@ textarea {
 }
 
 #projectForm {
-    width: fit-content;
+    width: 600px;
     padding: 20px;
     background: white;
     margin: auto;
     margin-top: calc((100vh - 400px) / 2);
+    border-radius: 10px;
+}
+#projectForm h3 {
+    color: dodgerblue;
+}
+
+#projectForm .form-group > .control-label {
+    margin-left: 20px;
 }
 .tblUser-container {
     display: flex;
@@ -174,10 +175,17 @@ textarea {
 
 #userForm {
     width: 600px;
-    height: 700px;
     background: white;
     margin: auto;
     margin-top: calc((100vh - 400px) / 2);
+    padding: 20px;
+    border-radius: 10px;
+}
+#userForm h3 {
+    color: dodgerblue;
+}
+#userForm .form-group > .control-label {
+    margin-left: 20px;
 }
 .backlog-items {
     display: grid;
@@ -203,4 +211,11 @@ textarea {
 
 .backlog-items-work-items {
     grid-area: items;
+}
+
+.flex-button{
+    display: flex;
+}
+#updateSprint, #addWorkItem{
+    cursor: pointer;
 }

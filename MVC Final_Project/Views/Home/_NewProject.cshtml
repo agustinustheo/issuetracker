@@ -1,45 +1,48 @@
 ﻿@using MVC_Final_Project.Models
 @model Project
 
-<style>
-    #projectForm h3 {
-        color: dodgerblue;
-    }
-
-    #projectForm .form-group > .control-label {
-        margin-left: 20px;
-    }
-</style>
-
 <div class="project-form-modal">
     <div id="projectForm">
         @using (Html.BeginForm("CreateProject", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
         {
             @Html.AntiForgeryToken()
             <h3>Create Project</h3>
-            <h4>Projects contain your source code, work items, and more</h4>
+            <h4>
+                Projects contain your source code, work items, and more
+            </h4>
             <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                @Html.LabelFor(m => m.projectName, new { @class = "control-label" })
-                <br />
-                <div class="col-lg-12">
-                    @Html.TextBoxFor(m => m.projectName, new { @class = "form-control" })
+            <div style="margin: auto;">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.projectName, "Project Name", new { @class = "control-label" })
+                    <br />
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(m => m.projectName, new { @class = "form-control" })
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.projectDesc, new { @class = "control-label" })
-                <br />
-                <div class="col-lg-12">
-                    @Html.TextBoxFor(m => m.projectDesc, new { @class = "form-control" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.projectDesc, "Project Description", new { @class = "control-label" })
+                    <br />
+                    <div class="col-lg-12">
+                        @Html.TextBoxFor(m => m.projectDesc, new { @class = "form-control" })
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save and Close" class="btn btn-default" />
+                <div class="form-group flex-button">
+                    <div class="col-md-offset-7">
+                        <input type="submit" value="Save and Close" class="btn btn-default" />
+                    </div>
+                    <div class="col-md-10">
+                        <button type="button" class="btn btn-default">Close</button>
+                    </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+<script>
+    $('button.btn.btn-default').click(function () {
+        location.reload();
+    });
+</script>
