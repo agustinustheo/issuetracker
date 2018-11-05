@@ -1,2 +1,2 @@
 # ojdmvc
-OJD menggunakan framework ASP.NET MVC
+A Project manager app using ASP.NET MVC
