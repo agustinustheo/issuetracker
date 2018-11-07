@@ -99,10 +99,21 @@ namespace MVC_Final_Project.Controllers
             if (file != null && file.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(file.FileName);
+                var filePath = Server.MapPath("~/Content/Images/user_assets/" + userData.userName + "/profile_picture/");
+                var savePath = "../../Content/Images/user_assets/" + userData.userName + "/profile_picture/";
+                if (!Directory.Exists(filePath))
+                {
+                    System.IO.Directory.CreateDirectory(filePath);
+                }
                 if (fileName != null)
                 {
-                    userData.userPhoto = Path.Combine(Server.MapPath("~/Images/user_assets/" + userData.userName + "/profile_picture/"), fileName).ToString();
+                    userData.userPhoto = Path.Combine(savePath, fileName).ToString();
+                    file.SaveAs(Path.Combine(filePath, fileName));
                 }
+            }
+            else
+            {
+                userData.userPhoto = "";
             }
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
@@ -134,10 +145,21 @@ namespace MVC_Final_Project.Controllers
             if (file != null && file.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(file.FileName);
+                var filePath = Server.MapPath("~/Content/Images/user_assets/" + userData.userName + "/profile_picture/");
+                var savePath = "../../Content/Images/user_assets/" + userData.userName + "/profile_picture/";
+                if (!Directory.Exists(filePath))
+                {
+                    System.IO.Directory.CreateDirectory(filePath);
+                }
                 if (fileName != null)
                 {
-                    userData.userPhoto = Path.Combine(Server.MapPath("~/Images/user_assets/" + userData.userName + "/profile_picture/"), fileName).ToString();
+                    userData.userPhoto = Path.Combine(savePath, fileName).ToString();
+                    file.SaveAs(Path.Combine(filePath, fileName));
                 }
+            }
+            else
+            {
+                userData.userPhoto = "";
             }
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
