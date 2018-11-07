@@ -262,119 +262,227 @@ namespace MVC_Final_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateSprintData(Sprint sprintData)
         {
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (sprintData.sprintName == null || sprintData.sprintName == ""
+                || sprintData.startDate == null || sprintData.startDate == DateTime.MinValue
+                || sprintData.endDate == null || sprintData.endDate == DateTime.MinValue)
             {
-                connection.Open();
-                command.CommandText = "UPDATE trSprint SET sprintName = @sprintName, startDate = @startDate, endDate = @endDate WHERE sprintID = @sprintID;";
-                command.Parameters.AddWithValue("@sprintName", sprintData.sprintName);
-                command.Parameters.AddWithValue("@startDate", sprintData.startDate);
-                command.Parameters.AddWithValue("@endDate", sprintData.endDate);
-                command.Parameters.AddWithValue("@sprintID", sprintData.sprintID);
-                SqlDataReader reader = command.ExecuteReader();
-                command.Parameters.Clear();
-                connection.Close();
-                return RedirectToAction("Index", "Project", new { projectID = sprintData.projectID, sprintID = sprintData.sprintID });
+                if (sprintData.sprintName == null || sprintData.sprintName == "")
+                {
+                    ModelState.AddModelError("sprintName", "Sprint Name cannot be empty");
+                }
+                else if (sprintData.startDate == null || sprintData.startDate == DateTime.MinValue)
+                {
+                    ModelState.AddModelError("startDate", "Start Date cannot be empty");
+                }
+                else if (sprintData.endDate == null || sprintData.endDate == DateTime.MinValue)
+                {
+                    ModelState.AddModelError("endDate", "End Date cannot be empty");
+                }
+                return PartialView("_UpdateSprint", sprintData);
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "UPDATE trSprint SET sprintName = @sprintName, startDate = @startDate, endDate = @endDate WHERE sprintID = @sprintID;";
+                    command.Parameters.AddWithValue("@sprintName", sprintData.sprintName);
+                    command.Parameters.AddWithValue("@startDate", sprintData.startDate);
+                    command.Parameters.AddWithValue("@endDate", sprintData.endDate);
+                    command.Parameters.AddWithValue("@sprintID", sprintData.sprintID);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+                    return Json(new { code = 1, projectID = sprintData.projectID, sprintID = sprintData.sprintID });
+                }
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddWorkItem(Work workData)
         {
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (workData.workName == null || workData.workName == "")
             {
-                connection.Open();
-                command.CommandText = "INSERT INTO trWork (workName, workState, sprintID) VALUES (@workName, @workState, @sprintID);";
-                command.Parameters.AddWithValue("@sprintID", workData.sprintID);
-                command.Parameters.AddWithValue("@workName", workData.workName);
-                command.Parameters.AddWithValue("@workState", workData.workState);
-                SqlDataReader reader = command.ExecuteReader();
-                command.Parameters.Clear();
-                connection.Close();
-                return RedirectToAction("Index", "Project", new { projectID = workData.projectID, sprintID = workData.sprintID });
+                ModelState.AddModelError("workData", "Work Name cannot be empty");
+                return PartialView("_AddWorkItem", workData);
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "INSERT INTO trWork (workName, workState, sprintID) VALUES (@workName, @workState, @sprintID);";
+                    command.Parameters.AddWithValue("@sprintID", workData.sprintID);
+                    command.Parameters.AddWithValue("@workName", workData.workName);
+                    command.Parameters.AddWithValue("@workState", workData.workState);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+                    return Json(new { code = 1, projectID = workData.projectID, sprintID = workData.sprintID });
+                }
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateWorkItem(Work workData)
         {
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (workData.workName == null || workData.workName == "")
             {
-                connection.Open();
-                command.CommandText = "UPDATE trWork SET workName = @workName, workState = @workState WHERE workID = @workID;";
-                command.Parameters.AddWithValue("@workID", workData.workID);
-                command.Parameters.AddWithValue("@workName", workData.workName);
-                command.Parameters.AddWithValue("@workState", workData.workState);
-                SqlDataReader reader = command.ExecuteReader();
-                command.Parameters.Clear();
-                connection.Close();
-                return RedirectToAction("Index", "Project", new { projectID = workData.projectID, sprintID = workData.sprintID });
+                ModelState.AddModelError("workName", "Work Name cannot be empty");
+                return PartialView("_UpdateWorkItem", workData);
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "UPDATE trWork SET workName = @workName, workState = @workState WHERE workID = @workID;";
+                    command.Parameters.AddWithValue("@workID", workData.workID);
+                    command.Parameters.AddWithValue("@workName", workData.workName);
+                    command.Parameters.AddWithValue("@workState", workData.workState);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+                    return Json(new { code = 1, projectID = workData.projectID, sprintID = workData.sprintID });
+                }
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddTaskItem(Models.Task taskData)
         {
-            int[] arrayID = new int[5];
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (taskData.taskName == null || taskData.taskName == "")
             {
-                connection.Open();
-                command.CommandText = "INSERT INTO trTask (taskName, taskState, userID, workID) VALUES (@taskName, @taskState, @userID, @workID);";
-                command.Parameters.AddWithValue("@userID", taskData.userID);
-                command.Parameters.AddWithValue("@workID", taskData.workID);
-                command.Parameters.AddWithValue("@taskName", taskData.taskName);
-                command.Parameters.AddWithValue("@taskState", taskData.taskState);
-                SqlDataReader reader = command.ExecuteReader();
-                command.Parameters.Clear();
-                connection.Close();
-
-                connection.Open();
-                command.CommandText = "SELECT TOP 1 a.projectID, b.sprintID FROM trTask d JOIN trWork c ON d.workID = c.workID JOIN trSprint b ON c.sprintID = b.sprintID JOIN msProject a ON b.projectID = a.projectID ORDER BY taskID DESC;";
-                reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    arrayID[0] = reader.GetInt32(0);
-                    arrayID[1] = reader.GetInt32(1);
-                }
-                command.Parameters.Clear();
-                connection.Close();
+                ModelState.AddModelError("taskName", "Task Name cannot be empty");
+                return PartialView("_AddTaskItem", taskData);
             }
-            return RedirectToAction("Index", "Project", new { projectID = arrayID[0], sprintID = arrayID[1] });
+            else
+            {
+                int[] arrayID = new int[5];
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "INSERT INTO trTask (taskName, taskState, userID, workID) VALUES (@taskName, @taskState, @userID, @workID);";
+                    command.Parameters.AddWithValue("@userID", taskData.userID);
+                    command.Parameters.AddWithValue("@workID", taskData.workID);
+                    command.Parameters.AddWithValue("@taskName", taskData.taskName);
+                    command.Parameters.AddWithValue("@taskState", taskData.taskState);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+
+                    connection.Open();
+                    command.CommandText = "SELECT TOP 1 a.projectID, b.sprintID FROM trTask d JOIN trWork c ON d.workID = c.workID JOIN trSprint b ON c.sprintID = b.sprintID JOIN msProject a ON b.projectID = a.projectID ORDER BY taskID DESC;";
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        arrayID[0] = reader.GetInt32(0);
+                        arrayID[1] = reader.GetInt32(1);
+                    }
+                    command.Parameters.Clear();
+                    connection.Close();
+                }
+                return Json(new { code = 1, projectID = arrayID[0], sprintID = arrayID[1] });
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateTaskItem(Models.Task taskData)
         {
-            int[] arrayID = new int[5];
+            if (taskData.taskName == null || taskData.taskName == "")
+            {
+                ModelState.AddModelError("taskName", "Task Name cannot be empty");
+                return PartialView("_UpdateTaskItem", taskData);
+            }
+            else
+            {
+                int[] arrayID = new int[5];
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "UPDATE trTask SET taskName = @taskName, taskState = @taskState, userID = @userID WHERE taskID = @taskID;";
+                    command.Parameters.AddWithValue("@userID", taskData.userID);
+                    command.Parameters.AddWithValue("@taskID", taskData.taskID);
+                    command.Parameters.AddWithValue("@taskName", taskData.taskName);
+                    command.Parameters.AddWithValue("@taskState", taskData.taskState);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+
+                    connection.Open();
+                    command.CommandText = "SELECT a.projectID, b.sprintID FROM trTask d JOIN trWork c ON d.workID = c.workID JOIN trSprint b ON c.sprintID = b.sprintID JOIN msProject a ON b.projectID = a.projectID WHERE d.taskID = @taskID;";
+                    command.Parameters.AddWithValue("@taskID", taskData.taskID);
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        arrayID[0] = reader.GetInt32(0);
+                        arrayID[1] = reader.GetInt32(1);
+                    }
+                    command.Parameters.Clear();
+                    connection.Close();
+                }
+                return Json(new { code = 1, projectID = arrayID[0], sprintID = arrayID[1] });
+            }
+        }
+
+        public async Task<ActionResult> RemoveWorkItem(int workID, int projectID)
+        {
+            int? sprintID = null;
             using (SqlConnection connection = new SqlConnection(connString))
             using (SqlCommand command = new SqlCommand("", connection))
             {
+
                 connection.Open();
-                command.CommandText = "UPDATE trTask SET taskName = @taskName, taskState = @taskState, userID = @userID WHERE taskID = @taskID;";
-                command.Parameters.AddWithValue("@userID", taskData.userID);
-                command.Parameters.AddWithValue("@taskID", taskData.taskID);
-                command.Parameters.AddWithValue("@taskName", taskData.taskName);
-                command.Parameters.AddWithValue("@taskState", taskData.taskState);
+                command.CommandText = "SELECT TOP 1 sprintID FROM trWork WHERE workID = @workID;";
+                command.Parameters.AddWithValue("@workID", workID);
                 SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    sprintID = reader.GetInt32(0);
+                }
                 command.Parameters.Clear();
                 connection.Close();
 
                 connection.Open();
-                command.CommandText = "SELECT a.projectID, b.sprintID FROM trTask d JOIN trWork c ON d.workID = c.workID JOIN trSprint b ON c.sprintID = b.sprintID JOIN msProject a ON b.projectID = a.projectID WHERE d.taskID = @taskID;";
-                command.Parameters.AddWithValue("@taskID", taskData.taskID);
+                command.CommandText = "DELETE FROM trTask WHERE workID = @workID; DELETE FROM trWork WHERE workID = @workID;";
+                command.Parameters.AddWithValue("@workID", workID);
                 reader = command.ExecuteReader();
+                command.Parameters.Clear();
+                connection.Close();
+                return RedirectToAction("Index", "Project", new { projectID = projectID, sprintID = sprintID });
+            }
+        }
+
+        public async Task<ActionResult> RemoveTaskItem(int taskID, int projectID)
+        {
+            int? sprintID = null;
+            using (SqlConnection connection = new SqlConnection(connString))
+            using (SqlCommand command = new SqlCommand("", connection))
+            {
+                connection.Open();
+                command.CommandText = "SELECT TOP 1 b.sprintID FROM trTask a JOIN trWork b ON a.workID = b.workID WHERE taskID = @taskID;";
+                command.Parameters.AddWithValue("@taskID", taskID);
+                SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    arrayID[0] = reader.GetInt32(0);
-                    arrayID[1] = reader.GetInt32(1);
+                    sprintID = reader.GetInt32(0);
                 }
                 command.Parameters.Clear();
                 connection.Close();
+
+                connection.Open();
+                command.CommandText = "DELETE FROM trTask WHERE taskID = @taskID;";
+                command.Parameters.AddWithValue("@taskID", taskID);
+                reader = command.ExecuteReader();
+                command.Parameters.Clear();
+                connection.Close();
             }
-            return RedirectToAction("Index", "Project", new { projectID = arrayID[0], sprintID = arrayID[1] });
+            return RedirectToAction("Index", "Project", new { projectID = projectID, sprintID = sprintID });
         }
     }
 }

@@ -78,18 +78,33 @@ namespace MVC_Final_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateProject(Project projectData)
         {
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (projectData.projectName == null || projectData.projectName == "" || projectData.projectDesc == null || projectData.projectDesc == "")
             {
-                connection.Open();
-                command.CommandText = "INSERT INTO msProject (projectName, projectDesc) VALUES (@projectName, @projectDesc); INSERT INTO trAuthUser (projectID, userID, userAuth) SELECT (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC) AS [projectID], userID, '0' AS [userAuth] FROM msUser; UPDATE trAuthUser SET userAuth = 1 WHERE userID = @userID AND projectID = (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC);";
-                command.Parameters.AddWithValue("@userID", Convert.ToInt32(Session["UserID"]));
-                command.Parameters.AddWithValue("@projectName", projectData.projectName);
-                command.Parameters.AddWithValue("@projectDesc", projectData.projectDesc);
-                SqlDataReader reader = command.ExecuteReader();
-                command.Parameters.Clear();
-                connection.Close();
-                return RedirectToAction("Index", "Home");
+                if (projectData.projectName == null || projectData.projectName == "")
+                {
+                    ModelState.AddModelError("projectName", "Project Name cannot be empty");
+                }
+                else if (projectData.projectDesc == null || projectData.projectDesc == "")
+                {
+                    ModelState.AddModelError("projectDesc", "Project Description cannot be empty");
+                }
+                return PartialView("_NewProject", projectData);
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "INSERT INTO msProject (projectName, projectDesc) VALUES (@projectName, @projectDesc); INSERT INTO trAuthUser (projectID, userID, userAuth) SELECT (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC) AS [projectID], userID, '0' AS [userAuth] FROM msUser; UPDATE trAuthUser SET userAuth = 1 WHERE userID = @userID AND projectID = (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC); INSERT INTO trSprint VALUES ('Sprint 1', GETDATE(), DATEADD(week, 2, GETDATE()), (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC)); INSERT INTO trSprint VALUES ('Sprint 2', DATEADD(week, 2, GETDATE()), DATEADD(week, 4, GETDATE()), (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC)); INSERT INTO trSprint VALUES ('Sprint 3', DATEADD(week, 4, GETDATE()), DATEADD(week, 6, GETDATE()), (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC)); INSERT INTO trSprint VALUES ('Sprint 4', DATEADD(week, 6, GETDATE()), DATEADD(week, 8, GETDATE()), (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC)); INSERT INTO trSprint VALUES ('Sprint 5', DATEADD(week, 8, GETDATE()), DATEADD(week, 10, GETDATE()), (SELECT TOP 1 projectID FROM msProject ORDER BY projectID DESC));";
+                    command.Parameters.AddWithValue("@userID", Convert.ToInt32(Session["UserID"]));
+                    command.Parameters.AddWithValue("@projectName", projectData.projectName);
+                    command.Parameters.AddWithValue("@projectDesc", projectData.projectDesc);
+                    SqlDataReader reader = command.ExecuteReader();
+                    command.Parameters.Clear();
+                    connection.Close();
+                    return Json(new { code = 1 });
+                }
             }
         }
         [HttpPost]

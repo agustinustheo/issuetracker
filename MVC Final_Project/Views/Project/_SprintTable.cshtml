@@ -115,6 +115,12 @@
     $(document).ready(function () {
         $('.tblWork-title').html("<b>@sprint.sprintName</b><a id='addWorkItem' data-sprint='@sprint.sprintID' data-project='@ViewBag.projectID'>Add Work Items</a>");
         $('.tblWork-details').html("<a id='updateSprint' data-sprint='@sprint.sprintID'>Set Dates</a><span>@DateTime.ParseExact(sprint.startDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy") - @DateTime.ParseExact(sprint.endDate.ToString(), "dd/MM/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("dd MMM yyyy")<span>");
+        $('#updateSprint').on('click', function () {
+            var sprintID = $(this).data('sprint');
+            $.get('@Url.Action("UpdateSprintPartial", "Project")', { sprintID: sprintID }, function (result) {
+                $('#modal').html(result);
+            });
+        });
         $('#addWorkItem').on('click', function () {
             var sprintID = $(this).data('sprint');
             var projectID = $(this).data('project');
@@ -145,10 +151,18 @@
                 $('#modal').html(result);
             });
         });
-        $('#updateSprint').on('click', function () {
-            var sprintID = $(this).data('sprint');
-            $.get('@Url.Action("UpdateSprintPartial", "Project")', { sprintID: sprintID }, function (result) {
-                $('#modal').html(result);
+        $('.removeWorkItem').on('click', function () {
+            var workID = $(this).data('work');
+            var projectID = $(this).data('project');
+            $.get('@Url.Action("RemoveWorkItem", "Project")', { workID: workID, projectID: projectID }, function (result) {
+                $('.container.body-content').html(result);
+            });
+        });
+        $('.removeTaskItem').on('click', function () {
+            var taskID = $(this).data('task');
+            var projectID = $(this).data('project');
+            $.get('@Url.Action("RemoveTaskItem", "Project")', { taskID: taskID, projectID: projectID }, function (result) {
+                $('.container.body-content').html(result);
             });
         });
     });

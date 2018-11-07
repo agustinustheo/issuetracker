@@ -1,9 +1,8 @@
 ﻿@using MVC_Final_Project.Models
 @model Project
-
 <div class="project-form-modal">
     <div id="projectForm">
-        @using (Html.BeginForm("CreateProject", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        @using (Ajax.BeginForm("CreateProject", "Home", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @class = "form-horizontal", role = "form" }))
         {
             @Html.AntiForgeryToken()
             <h3>Create Project</h3>
@@ -11,8 +10,9 @@
                 Projects contain your source code, work items, and more
             </h4>
             <hr />
+            @Html.ValidationMessageFor(m => m.projectName, String.Empty, new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.projectDesc, String.Empty, new { @class = "text-danger" })
             <div style="margin: auto;">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
                     @Html.LabelFor(m => m.projectName, "Project Name", new { @class = "control-label" })
                     <br />
@@ -42,7 +42,26 @@
 </div>
 
 <script>
-    $('button.btn.btn-default').click(function () {
-        location.reload();
+    $(document).ready(function () {
+        $('input[type=submit]').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateProject", "Home")',
+                dataType: "json",
+                data: $('form').serialize(),
+                success: function (result) {
+                    if (result.code === 1) {
+                        location.reload();
+                    }
+                },
+                error: function (result) {
+                    $("#modal").html(result.responseText);
+                }
+            });
+        });
+        $('button.btn.btn-default').click(function () {
+            location.reload();
+        });
     });
 </script>

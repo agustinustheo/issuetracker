@@ -7,7 +7,7 @@
 
 <div class="project-form-modal">
     <div id="projectForm">
-        @using (Html.BeginForm("UpdateSprintData", "Project", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        @using (Ajax.BeginForm("UpdateSprintData", "Project", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @class = "form-horizontal", role = "form" }))
         {
             @Html.AntiForgeryToken()
             <h3>Sprint</h3>
@@ -15,7 +15,9 @@
             <hr />
             @Html.HiddenFor(m => m.sprintID);
             @Html.HiddenFor(m => m.projectID);
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.sprintName, String.Empty, new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.startDate, String.Empty, new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.endDate, String.Empty, new { @class = "text-danger" })
             <div class="form-group">
                 @Html.LabelFor(m => m.sprintName, "Sprint Name", new { @class = "control-label" })
                 <div class="col-lg-12">
@@ -49,9 +51,26 @@
     </div>
     <script>
         $(document).ready(function () {
+            $('input[type=submit]').click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UpdateSprintData", "Project")',
+                    data: $('form').serialize(),
+                    success: function (result) {
+                        if (result.code === 1) {
+                            window.location.href = "/Project?projectID=" + result.projectID + "&sprintID=" + result.sprintID;
+                        }
+                    },
+                    error: function (result) {
+                        $("#modal").html(result.responseText);
+                    }
+                });
+            });
             $('button.btn.btn-default').click(function () {
                 location.reload();
             });
+
             $("#sprintStartDate").datepicker({ dateFormat: 'dd MM yy' });
             $("#sprintEndDate").datepicker({ dateFormat: 'dd MM yy' });
         });

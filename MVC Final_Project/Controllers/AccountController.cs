@@ -30,29 +30,45 @@ namespace MVC_Final_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(User userData)
         {
-            using (SqlConnection connection = new SqlConnection(connString))
-            using (SqlCommand command = new SqlCommand("", connection))
+            if (userData.userName == null || userData.userName == "" || userData.userPassword == null || userData.userPassword == "")
             {
-                connection.Open();
-                command.CommandText = "SELECT TOP 1 userID, userRole FROM msUser WHERE userName=@userName AND userPassword=@userPassword;";
-                command.Parameters.AddWithValue("@userName", userData.userName);
-                command.Parameters.AddWithValue("@userPassword", userData.userPassword);
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows == false)
+                if (userData.userName == null || userData.userName == "")
                 {
-                    connection.Close();
-                    return RedirectToAction("Index", "Account");
+                    ModelState.AddModelError("userName", "Username cannot be empty");
                 }
-                else
+                else if (userData.userPassword == null || userData.userPassword == "")
                 {
-                    while (reader.Read())
+                    ModelState.AddModelError("userPassword", "Password cannot be empty");
+                }
+                return View("Index", userData);
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connString))
+                using (SqlCommand command = new SqlCommand("", connection))
+                {
+                    connection.Open();
+                    command.CommandText = "SELECT TOP 1 userID, userRole FROM msUser WHERE userName=@userName AND userPassword=@userPassword;";
+                    command.Parameters.AddWithValue("@userName", userData.userName);
+                    command.Parameters.AddWithValue("@userPassword", userData.userPassword);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows == false)
                     {
-                        Session["UserID"] = reader.GetInt32(0);
-                        Session["Username"] = userData.userName;
-                        Session["UserRole"] = reader.GetInt32(1);
+                        ModelState.AddModelError("userName", "Username or Password is invalid");
+                        connection.Close();
+                        return View("Index", userData);
                     }
-                    connection.Close();
-                    return RedirectToAction("Index", "Home");
+                    else
+                    {
+                        while (reader.Read())
+                        {
+                            Session["UserID"] = reader.GetInt32(0);
+                            Session["Username"] = userData.userName;
+                            Session["UserRole"] = reader.GetInt32(1);
+                        }
+                        connection.Close();
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
             }
         }

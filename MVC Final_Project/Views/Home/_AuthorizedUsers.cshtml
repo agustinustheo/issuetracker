@@ -22,7 +22,7 @@
                     else
                     {
                         <div>
-                            <label><input type="checkbox" name="authorizedUsers" value="@x.userID">&nbsp;&nbsp;<img src="@x.userPhoto" class="user-photo-profile" />&nbsp;&nbsp;@x.userName</label>
+                            <label><input type="checkbox" name="authorizedUsers" value="@x.userID" checked>&nbsp;&nbsp;<img src="@x.userPhoto" class="user-photo-profile" />&nbsp;&nbsp;@x.userName</label>
                         </div>
                     }
                 }
@@ -31,7 +31,7 @@
                     if (x.userPhoto == "" | x.userPhoto == null)
                     {
                         <div>
-                            <label><input type="checkbox" name="authorizedUsers" value="@x.userID" checked>&nbsp;&nbsp;<img src="../../Content/Images/anonymous_assets/profile_picture/profile.jpg" class="user-photo-profile" />&nbsp;&nbsp;@x.userName</label>
+                            <label><input type="checkbox" name="authorizedUsers" value="@x.userID">&nbsp;&nbsp;<img src="../../Content/Images/anonymous_assets/profile_picture/profile.jpg" class="user-photo-profile" />&nbsp;&nbsp;@x.userName</label>
                         </div>
                     }
                     else
